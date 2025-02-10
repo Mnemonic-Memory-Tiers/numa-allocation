@@ -96,7 +96,6 @@ int main(void) {
 
     REMOTE_NODE = 1;
 
-    printf("exiting now...");
 
     // allocate remote and local memory
     // don't forget to call NUMA free
@@ -104,9 +103,11 @@ int main(void) {
     void* mem1 = alloc_on_node(alloc_size, REMOTE_NODE);
     void* mem2 = alloc_local(alloc_size);
 
-    printf("remote allocation: %p", mem1);
-    printf("local allocation: %p", mem2);
+    printf("remote allocation: %p\n", mem1);
+    printf("local allocation: %p\n", mem2);
 
+    printf("exiting now...\n");
+    
     return EXIT_SUCCESS;
 }
 
