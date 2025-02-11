@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <time.h>
+#include <unistd.h>
 
 /* third party */
 #include <numa.h>
@@ -106,8 +107,11 @@ int main(void) {
     printf("remote allocation: %p\n", mem1);
     printf("local allocation: %p\n", mem2);
 
-    printf("exiting now...\n");
-    
+    //printf("exiting now...\n");
+    printf("pid %ju\n", (uintmax_t)getpid()); 
+    printf("wating ...\n");
+    while(1);
+
     return EXIT_SUCCESS;
 }
 
