@@ -111,7 +111,7 @@ int main(void) {
     *((uint32_t *) mem1) = 0xdeadbeef;
     *((uint32_t *) mem2) = 0xcafed00d;
 
-    printf("values in memory: %x %x", *((uint32_t *) mem1), *((uint32_t *) mem2));
+    printf("values in memory: %x %x\n", *((uint32_t *) mem1), *((uint32_t *) mem2));
 
     //printf("exiting now...\n");
     printf("pid %ju\n", (uintmax_t)getpid()); 
