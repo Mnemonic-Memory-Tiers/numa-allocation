@@ -107,6 +107,12 @@ int main(void) {
     printf("remote allocation: %p\n", mem1);
     printf("local allocation: %p\n", mem2);
 
+    // actually page in/read/write to memory
+    *((uint32_t *) mem1) = 0xdeadbeef;
+    *((uint32_t *) mem2) = 0xcafed00d;
+
+    printf("values in memory: %x %x", *((uint32_t *) mem1), *((uint32_t *) mem2));
+
     //printf("exiting now...\n");
     printf("pid %ju\n", (uintmax_t)getpid()); 
     printf("wating ...\n");
