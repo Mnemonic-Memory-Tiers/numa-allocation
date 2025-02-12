@@ -49,7 +49,8 @@ void* alloc_on_node(size_t size, int node) {
 void* alloc_local(size_t size) {
     // either use numa_alloc_local
     // or the function we defined above with value 0
-    void* memory = numa_alloc_local(size);
+    // void* memory = numa_alloc_local(size);
+    void* memory = alloc_on_node(size, 0);
     return memory;
 }
 
