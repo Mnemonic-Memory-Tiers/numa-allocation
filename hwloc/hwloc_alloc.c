@@ -44,7 +44,7 @@ int main(void)
     int levels;
     char string[128];
     int topodepth;
-    void *m;
+    void *mem1, *mem2;
     hwloc_topology_t topology;
     hwloc_cpuset_t cpuset;
     hwloc_obj_t obj;
@@ -74,25 +74,31 @@ int main(void)
     size = 1024*1024;
     printf("%d NUMA nodes\n", n);
     printf("Allocating %d from %d\n", size, n - 1);
-    m = hwloc_alloc_membind(topology, size, obj->nodeset,
+    mem1 = hwloc_alloc_membind(topology, size, obj->nodeset,
                             HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_BYNODESET);
-    printf("pointer from hwloc_alloc: %p\n", m);
+    // printf("pointer from hwloc_alloc: %p\n", m);
 
-    // printf("remote allocation: %p\n", mem1);
-    // printf("local allocation: %p\n", mem2);
+
+    printf("Allocating %d from %d\n", size, n - 1);
+        obj = hwloc_get_obj_by_type(topology, HWLOC_OBJ_NUMANODE, 0);
+    mem2 = hwloc_alloc_membind(topology, size, obj->nodeset,
+                            HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_BYNODESET);
+    printf("remote allocation: %p\n", mem1);
+    printf("local allocation: %p\n", mem2);
 
     // actually page in/read/write to memory
-    *((uint32_t *) m) = 0xdeadbeef;
-    // *((uint32_t *) mem2) = 0xcafed00d;
+    *((uint32_t *) mem1) = 0xdeadbeef;
+    *((uint32_t *) mem2) = 0xcafed00d;
 
-    printf("values in memory: %x\n", *((uint32_t *) m));
+    printf("values in memory: %x %x\n", *((uint32_t *) mem1), *((uint32_t *) mem2));
 
     //printf("exiting now...\n");
     printf("pid %ju\n", (uintmax_t)getpid()); 
     printf("wating ...\n");
 
     while(1);
-    hwloc_free(topology, m, size);
+    hwloc_free(topology, mem1, size);
+    hwloc_free(topology, mem2, size);
 
     /* Destroy topology object. */
     hwloc_topology_destroy(topology);
