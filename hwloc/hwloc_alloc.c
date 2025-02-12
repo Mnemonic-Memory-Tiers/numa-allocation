@@ -17,6 +17,16 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <numa.h>
+#include <numaif.h>
+void find_memory_node_for_addr(void* ptr) {
+    int numa_node = -1;
+    if(get_mempolicy(&numa_node, NULL, 0, ptr, MPOL_F_NODE | MPOL_F_ADDR) < 0) {
+        perror("get_mempolicy failed");
+    }
+    printf("numa node: %d\n", numa_node);
+}
+
 static void print_children(hwloc_topology_t topology, hwloc_obj_t obj,
                            int depth)
 {
@@ -74,11 +84,11 @@ int main(void)
         fprintf(stderr, "no node for index: %d\n", n - 1);
     }
 
-    size = 1024*1024;
+    size = 4096 * 3; //1024*1024;
     printf("%d NUMA nodes\n", n);
     printf("Allocating %d from %d (%d)\n", size, n - 1, obj->os_index);
     mem1 = hwloc_alloc_membind(topology, size, obj->nodeset,
-                            HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_STRICT); //HWLOC_MEMBIND_BYNODESET);
+                            HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_BYNODESET);
     // printf("pointer from hwloc_alloc: %p\n", m);
 
 
@@ -91,7 +101,7 @@ int main(void)
 
     printf("Allocating %d from %d (%d)\n", size, local, obj2->os_index);
     mem2 = hwloc_alloc_membind(topology, size, obj2->nodeset,
-                            HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_STRICT); //HWLOC_MEMBIND_BYNODESET);
+                            HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_BYNODESET);
 
     printf("remote allocation: %p\n", mem1);
     printf("local allocation: %p\n", mem2);
@@ -100,11 +110,14 @@ int main(void)
     *((uint32_t *) mem1) = 0xdeadbeef;
     *((uint32_t *) mem2) = 0xcafed00d;
 
-    printf("values in memory: %x %x\n", *((uint32_t *) mem1), *((uint32_t *) mem2));
+    printf("values in memory: %08x %08x\n", *((uint32_t *) mem1), *((uint32_t *) mem2));
 
     //printf("exiting now...\n");
     printf("pid %ju\n", (uintmax_t)getpid()); 
     printf("wating ...\n");
+
+    find_memory_node_for_addr(mem1);
+    find_memory_node_for_addr(mem2);
 
     while(1);
     hwloc_free(topology, mem1, size);

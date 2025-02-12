@@ -11,6 +11,7 @@
 
 /* third party */
 #include <numa.h>
+#include <numaif.h>
 
 #define SECS_AS_NANOS 1000000000
 #define BUFFER_SIZE 256
@@ -49,9 +50,17 @@ void* alloc_on_node(size_t size, int node) {
 void* alloc_local(size_t size) {
     // either use numa_alloc_local
     // or the function we defined above with value 0
-    // void* memory = numa_alloc_local(size);
-    void* memory = alloc_on_node(size, 0);
+    void* memory = numa_alloc_local(size);
+    //void* memory = alloc_on_node(size, 0);
     return memory;
+}
+
+void find_memory_node_for_addr(void* ptr) {
+    int numa_node = -1;
+    if(get_mempolicy(&numa_node, NULL, 0, ptr, MPOL_F_NODE | MPOL_F_ADDR) < 0) {
+        perror("get_mempolicy failed");
+    }
+    printf("numa node: %d\n", numa_node);
 }
 
 // initalization of remote memory node
@@ -114,10 +123,13 @@ int main(void) {
 
     printf("values in memory: %x %x\n", *((uint32_t *) mem1), *((uint32_t *) mem2));
 
+    find_memory_node_for_addr(mem1);
+    find_memory_node_for_addr(mem2);
+
     //printf("exiting now...\n");
     printf("pid %ju\n", (uintmax_t)getpid()); 
     printf("wating ...\n");
-    while(1);
+    // while(1);
 
     return EXIT_SUCCESS;
 }

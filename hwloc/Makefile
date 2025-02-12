@@ -11,7 +11,7 @@ CFLAGS=-W -Wall -I/opt/local/include
 
 # idk what is needed here ...
 # LDFLAGS=-lnuma
-LDFLAGS=-L/opt/local/lib -lhwloc
+LDFLAGS=-L/opt/local/lib -lhwloc -lnuma
 
 SRCS=hwloc_alloc.c
 EXEC=hwloc_alloc
