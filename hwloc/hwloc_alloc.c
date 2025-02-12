@@ -73,14 +73,15 @@ int main(void)
 
     size = 1024*1024;
     printf("%d NUMA nodes\n", n);
-    printf("Allocating %d from %d\n", size, n - 1);
+    printf("Allocating %d from %d (%s)\n", size, n - 1, obj->name);
     mem1 = hwloc_alloc_membind(topology, size, obj->nodeset,
                             HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_BYNODESET);
     // printf("pointer from hwloc_alloc: %p\n", m);
 
 
-    printf("Allocating %d from %d\n", size, n - 1);
-        obj = hwloc_get_obj_by_type(topology, HWLOC_OBJ_NUMANODE, 0);
+    int local = 0;
+    obj = hwloc_get_obj_by_type(topology, HWLOC_OBJ_NUMANODE, local);
+    printf("Allocating %d from %d (%s)\n", size, local, obj->name);
     mem2 = hwloc_alloc_membind(topology, size, obj->nodeset,
                             HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_BYNODESET);
     printf("remote allocation: %p\n", mem1);
