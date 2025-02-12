@@ -78,7 +78,7 @@ int main(void)
     printf("%d NUMA nodes\n", n);
     printf("Allocating %d from %d (%d)\n", size, n - 1, obj->os_index);
     mem1 = hwloc_alloc_membind(topology, size, obj->nodeset,
-                            HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_BYNODESET);
+                            HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_STRICT); //HWLOC_MEMBIND_BYNODESET);
     // printf("pointer from hwloc_alloc: %p\n", m);
 
 
@@ -91,7 +91,7 @@ int main(void)
 
     printf("Allocating %d from %d (%d)\n", size, local, obj2->os_index);
     mem2 = hwloc_alloc_membind(topology, size, obj2->nodeset,
-                            HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_BYNODESET);
+                            HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_STRICT); //HWLOC_MEMBIND_BYNODESET);
 
     printf("remote allocation: %p\n", mem1);
     printf("local allocation: %p\n", mem2);
