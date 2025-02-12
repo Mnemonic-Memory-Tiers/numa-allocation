@@ -70,6 +70,9 @@ int main(void)
     printf("Allocating from another NUMA node\n");
     n = hwloc_get_nbobjs_by_type(topology, HWLOC_OBJ_NUMANODE);
     obj = hwloc_get_obj_by_type(topology, HWLOC_OBJ_NUMANODE, n - 1);
+    if(obj == NULL) {
+        fprintf(stderr, "no node for index: %d\n", n - 1);
+    }
 
     size = 1024*1024;
     printf("%d NUMA nodes\n", n);
@@ -82,9 +85,14 @@ int main(void)
     hwloc_obj_t obj2;
     int local = 0;
     obj2 = hwloc_get_obj_by_type(topology, HWLOC_OBJ_NUMANODE, local);
-    printf("Allocating %d from %d (%d)\n", size, local, obj->os_index);
-    mem2 = hwloc_alloc_membind(topology, size, obj->nodeset,
+    if(obj2 == NULL) {
+        fprintf(stderr, "no node for index: %d\n", local);
+    }
+
+    printf("Allocating %d from %d (%d)\n", size, local, obj2->os_index);
+    mem2 = hwloc_alloc_membind(topology, size, obj2->nodeset,
                             HWLOC_MEMBIND_BIND, HWLOC_MEMBIND_BYNODESET);
+
     printf("remote allocation: %p\n", mem1);
     printf("local allocation: %p\n", mem2);
 
